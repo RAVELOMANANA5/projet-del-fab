@@ -21,7 +21,6 @@ public class ArchiveMoniteur {
     @Column(name = "archive_date_mon", nullable = false)
     private LocalDate archiveDateMon;
 
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "moniteur_id", nullable = false)
     private Moniteur moniteur;

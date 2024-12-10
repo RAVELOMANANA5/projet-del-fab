@@ -21,15 +21,14 @@ public class ArchivedMoniteurDTOMapper implements Function<ArchiveMoniteur, Arch
      * @return the function result
      */
     @Override
-    public ArchivedMoniteurDTO apply(ArchiveMoniteur am) {
-        /*
+    public ArchivedMoniteurDTO apply(ArchiveMoniteur am) {/*
         return new ArchivedMoniteurDTO(
                 getOrDefault(() -> am.getMoniteur().getMatrMoniteur(), Constante.INCONNU),
                 getOrDefault(() -> am.getMoniteur().getNom(), Constante.INCONNU),
                 getOrDefault(() -> am.getMoniteur().getPrenom(), Constante.INCONNU),
-                getOrDefault(() -> )
+                getOrDefault(() -> am.getMoniteur().getPostes().)
         );
-         */
+*/
         return null;
     }
 

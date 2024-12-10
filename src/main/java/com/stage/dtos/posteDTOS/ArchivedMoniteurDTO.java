@@ -15,4 +15,6 @@ public record ArchivedMoniteurDTO(
         String nomRegion,
         String archiveDateMon
 ) {
+    public ArchivedMoniteurDTO {
+    }
 }

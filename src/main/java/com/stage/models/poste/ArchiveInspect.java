@@ -12,17 +12,16 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@Table(name = "archive_moniteur")
-public class ArchiveMoniteur {
+@Table(name = "archive_inspecteur")
+public class ArchiveInspect {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "archive_date_mon", nullable = false)
-    private LocalDate archiveDateMon;
-
+    @Column(name = "archive_date_inspecteur", nullable = false)
+    private LocalDate archiveDateInspect;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "moniteur_id", nullable = false)
-    private Moniteur moniteur;
+    @JoinColumn(name = "inspecteur_id", nullable = false)
+    private Inspecteur inspecteur;
 }

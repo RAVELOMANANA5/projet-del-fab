@@ -26,7 +26,8 @@ public record EleveDTO(
         String copieEtatCivil,
         long numCopie,
         long nmbFrereEtSoeur,
-        String poste
+        String poste,
+        String annScolaire
 
 ) {
 }

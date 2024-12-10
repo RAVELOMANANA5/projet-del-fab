@@ -9,4 +9,7 @@ public interface ResultatExamenService {
     Map<String, Object> getAllResultatExamens(Integer pageNo, Integer pageSize);
     boolean updateResultatExamen(Long id, ResultatExamen resultatExamen);
     boolean deleteResultatExamen(Long id);
+    Map<String, Object> findElevesWithMoyenneAndRang(Integer pageNo, Integer pageSize);
+    Map<String, Object> findAllByNumPosteOrNomPoste(Integer pageNo, Integer pageSize, String numPoste, String nomPoste);
+
 }

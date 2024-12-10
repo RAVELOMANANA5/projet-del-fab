@@ -46,6 +46,7 @@ public class MoniteurServiceImpl implements MoniteurService {
         if (byMatrMoniteur.isPresent()) {
             throw new ResourceAlreadyExistsException("Matricule " + moniteur.getMatrMoniteur() + " est déjà existe");
         }
+        moniteur.setArchived(false);
         moniteurRepository.save(moniteur);
     }
 
@@ -60,6 +61,33 @@ public class MoniteurServiceImpl implements MoniteurService {
 
         List<MoniteurDTO> moniteurList = moniteurs.getContent()
                 .stream()
+                .filter(moniteur -> moniteur.isArchived() == false)
+                .sorted(Comparator.comparing(Moniteur::getNom))
+                .map(moniteurDTOMapper)
+                .collect(Collectors.toList());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("moniteurs", moniteurList);
+        response.put("currentPage", moniteurs.getNumber());
+        response.put("size", moniteurs.getSize());
+        response.put("totalPages", moniteurs.getTotalPages());
+        response.put("totalElements", moniteurs.getTotalElements());
+
+        return response;
+    }
+
+    /**
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public Map<String, Object> findAllBySexe(Integer pageNo, Integer pageSize, String sexe) {
+        Page<Moniteur> moniteurs = moniteurRepository.findAllBySexe(PageRequest.of(pageNo, pageSize), sexe);
+
+        List<MoniteurDTO> moniteurList = moniteurs.getContent()
+                .stream()
+                .filter(moniteur -> moniteur.isArchived() == false)
                 .sorted(Comparator.comparing(Moniteur::getNom))
                 .map(moniteurDTOMapper)
                 .collect(Collectors.toList());
@@ -82,6 +110,7 @@ public class MoniteurServiceImpl implements MoniteurService {
     public Map<String, Object> findMoniteurById(Long id) {
         MoniteurDTO moniteurDTO = moniteurRepository.findById(id)
                 .stream()
+                .filter(moniteur -> moniteur.isArchived() == false)
                 .map(moniteurDTOMapper)
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("Moniteur " + id + " n'existe pas"));
@@ -103,6 +132,7 @@ public class MoniteurServiceImpl implements MoniteurService {
 
           List<MoniteurDetailDTO> content = all.getContent()
                   .stream()
+                  .filter(moniteur -> moniteur.isArchived() == false)
                   .map(moniteurDetailDTOMapper)
                   .collect(Collectors.toList());
 
@@ -142,6 +172,7 @@ public class MoniteurServiceImpl implements MoniteurService {
         byId.setEtudeSecond(moniteur.getEtudeSecond());
         byId.setLieuEtudeSecond(moniteur.getLieuEtudeSecond());
         byId.setDernierDiplome(moniteur.getDernierDiplome());
+        byId.setArchived(false);
         moniteurRepository.save(byId);
         return true;
     }

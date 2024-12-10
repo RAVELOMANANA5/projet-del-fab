@@ -1,5 +1,8 @@
 package com.stage.service.posteService.impl;
 
+import com.itextpdf.html2pdf.ConverterProperties;
+import com.itextpdf.html2pdf.HtmlConverter;
+import com.itextpdf.text.DocumentException;
 import com.stage.dtoMappers.posteMapper.PosteDTOMapper;
 import com.stage.dtos.posteDTOS.PostCountPerClassDTO;
 import com.stage.dtos.posteDTOS.PostCountPerYearDTO;
@@ -9,11 +12,16 @@ import com.stage.exception.ResourceNotFoundException;
 import com.stage.models.poste.Poste;
 import com.stage.repository.posteRepository.PosteRepository;
 import com.stage.service.posteService.PosteService;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.time.LocalTime;
 import java.time.Year;
 import java.util.HashMap;
@@ -27,9 +35,12 @@ public class PosteServiceImpl implements PosteService {
 
     private final PosteRepository posteRepository;
     private final PosteDTOMapper posteDTOMapper;
-    public PosteServiceImpl(PosteRepository posteRepository, PosteDTOMapper posteDTOMapper) {
+    private final RestTemplate restTemplate;
+
+    public PosteServiceImpl(PosteRepository posteRepository, PosteDTOMapper posteDTOMapper, RestTemplate restTemplate) {
         this.posteRepository = posteRepository;
         this.posteDTOMapper = posteDTOMapper;
+        this.restTemplate = restTemplate;
     }
 
     /**
@@ -85,9 +96,56 @@ public class PosteServiceImpl implements PosteService {
 
     /**
      * @return
+     * @throws DocumentException
+     * @throws IOException
      */
     @Override
-    public Map<String, Object> findPaginatedPostsByOpeningYear (int pageNo, int pageSize) {
+    public byte[] generatePostePdf(Long id) throws DocumentException, IOException {
+
+        PosteDTO byId = posteRepository.findById(id)
+                .stream()
+                .map(posteDTOMapper)
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Poste " + id + " not found"));
+
+        String htmlTemplateUrl  = "http://localhost:3000/src/template/poste_template.html";
+        String htmlContent  = restTemplate.getForObject(htmlTemplateUrl, String.class);
+
+        Map<String, String> doc = new HashMap<>();
+        doc.put("html", "Detail d'un poste");
+        doc.put("numPoste", byId.numPoste());
+        doc.put("nomPoste", byId.nomPoste());
+        doc.put("anOuverPoste", String.valueOf(byId.anOuverPoste()));
+        doc.put("cisco", byId.cisco());
+        doc.put("commune", byId.commune());
+        doc.put("secteur", byId.secteur());
+        doc.put("NomMoniteur", byId.NomMoniteur());
+        doc.put("PrenomMoniteur", byId.PrenomMoniteur());
+        doc.put("NomInspecteur", byId.NomInspecteur());
+        doc.put("PrenomInspecteur", byId.PrenomInspecteur());
+
+        String populatedHtml = populateTemplate(htmlContent, doc);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ConverterProperties cp = new ConverterProperties();
+        HtmlConverter.convertToPdf(populatedHtml, baos, cp);
+
+        return baos.toByteArray();
+    }
+
+    private String populateTemplate(String template, Map<String, String> placeholders) {
+        String populatedTemplate = template;
+        for (Map.Entry<String, String> entry : placeholders.entrySet()) {
+            populatedTemplate = populatedTemplate.replace("{{" + entry.getKey() + "}}", entry.getValue());
+        }
+        return populatedTemplate;
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public Map<String, Object> findAllByAnOuverPoste(int pageNo, int pageSize) {
         Page<Object[]> postsPerYear = posteRepository.findPostsPerYear(PageRequest.of(pageNo, pageSize));
 
         List<PostCountPerYearDTO> postCounts = postsPerYear.getContent()

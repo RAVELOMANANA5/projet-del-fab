@@ -1,10 +1,8 @@
 package com.stage.controllers.scolaireController;
 
-import com.stage.models.scolaire.Matiere;
 import com.stage.models.scolaire.ResultatExamen;
 import com.stage.service.scolaireService.ResultatExamenService;
 import com.stage.service.scolaireService.impl.ResultatExamenServiceImpl;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -12,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "api/v1/ResultatExamens")
@@ -60,10 +59,31 @@ public class ResultatExamenController {
     }
 
     @GetMapping(value = "/result")
-    public ResponseEntity<Map<String, Object>> findElevesWithMoyenneAndRang() {
+    public ResponseEntity<Map<String, Object>> findElevesWithMoyenneAndRang(
+            @RequestParam(defaultValue = "0") Integer pageNo,
+            @RequestParam(defaultValue = "10") Integer pageSize
+    ) {
         Map<String, Object> response = new HashMap<>();
         try {
-            response = resultatExamenServiceImpl.findElevesWithMoyenneAndRang();
+            response = resultatExamenService.findElevesWithMoyenneAndRang(pageNo, pageSize);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+        catch (Exception e) {
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @GetMapping(value = "/findAllByNumPosteOrNomPoste")
+    public ResponseEntity<Map<String, Object>> findAllByNumPosteOrNomPoste(
+            @RequestParam(defaultValue = "0") Integer pageNo,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false) String numPoste,
+            @RequestParam(required = false) String nomPoste
+    ) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            response = resultatExamenService.findAllByNumPosteOrNomPoste(pageNo, pageSize, numPoste, nomPoste);
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }
         catch (Exception e) {

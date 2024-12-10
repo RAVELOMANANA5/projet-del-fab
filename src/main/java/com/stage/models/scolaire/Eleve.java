@@ -1,6 +1,7 @@
 package com.stage.models.scolaire;
 
 import com.stage.models.poste.Poste;
+import com.stage.models.poste.Region;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -37,6 +38,7 @@ public class Eleve {
     @Size(min = 2, message = "Prenom doit comporter au moins 2 caractères")
     private String prenomEleve;
 
+    @Column(name = "date_naiss_eleve")
     private LocalDate dateNaissEleve;
 
     @Column(name = "lieu_naissance")
@@ -107,8 +109,16 @@ public class Eleve {
             inverseJoinColumns = @JoinColumn(name = "examen_id")
     )
     private List<Examen> examens = new ArrayList<>();
-/*
+
     @ManyToOne(fetch = FetchType.LAZY)
-    private Date date;
- */
+    @JoinColumn(name = "ann_scolaire_id")
+    //@NotNull(message = "La annScolaire ne peut pas être nulle")
+    private AnnScolaire annScolaire;
+
+    @OneToOne(mappedBy = "eleve", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private ArchiveEleve archive;
+
+    @Column(name = "archived", nullable = false)
+    private boolean archived = false;
+
 }

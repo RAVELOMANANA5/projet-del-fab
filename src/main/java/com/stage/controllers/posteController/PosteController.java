@@ -1,12 +1,16 @@
 package com.stage.controllers.posteController;
 
+import com.itextpdf.text.DocumentException;
 import com.stage.models.poste.Poste;
+import com.stage.repository.posteRepository.PosteRepository;
 import com.stage.service.posteService.PosteService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,9 +20,11 @@ import java.util.Map;
 public class PosteController {
 
     private final PosteService posteService;
+    private final PosteRepository posteRepository;
 
-    public PosteController(PosteService posteService) {
+    public PosteController(PosteService posteService, PosteRepository posteRepository) {
         this.posteService = posteService;
+        this.posteRepository = posteRepository;
     }
 
     @PostMapping
@@ -70,6 +76,21 @@ public class PosteController {
         }
     }
 
+    @GetMapping(value = "/pdf/{id}")
+    public ResponseEntity<byte[]> generatePostePdf(@PathVariable("id") Long id) {
+        try {
+            byte[] pdf = posteService.generatePostePdf(id);
+            HttpHeaders headers = new HttpHeaders();
+            headers.set(HttpHeaders.CONTENT_TYPE, "application/pdf");
+            headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=poste.pdf");
+            return new ResponseEntity<>(pdf, headers, HttpStatus.OK);
+        }
+        catch (DocumentException | IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
     @GetMapping("/by-year")
     public ResponseEntity<Map<String, Object>> findPaginatedPostsByOpeningYear(
             @RequestParam(defaultValue = "0") int pageNo,
@@ -77,7 +98,7 @@ public class PosteController {
     ) {
         Map<String, Object> message = new HashMap<>();
         try {
-            message = posteService.findPaginatedPostsByOpeningYear(pageNo, pageSize);
+            message = posteService.findAllByAnOuverPoste(pageNo, pageSize);
             return new ResponseEntity<>(message, HttpStatus.OK);
         }
         catch (Exception e) {

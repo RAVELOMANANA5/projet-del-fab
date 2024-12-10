@@ -39,7 +39,8 @@ public class EleveDTOMapper implements Function<Eleve, EleveDTO>  {
                 eleve.getCopieEtatCivil(),
                 eleve.getNumCopie(),
                 eleve.getNmbFrereEtSoeur(),
-                eleve.getPoste().getNomPoste()
+                eleve.getPoste().getNomPoste(),
+                eleve.getAnnScolaire().getAnnDebut() + "-" + eleve.getAnnScolaire().getAnnFin()
         );
     }
 }

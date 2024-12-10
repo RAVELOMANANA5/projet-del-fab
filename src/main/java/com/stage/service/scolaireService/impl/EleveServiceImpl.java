@@ -41,7 +41,7 @@ public class EleveServiceImpl implements EleveService {
      */
     @Override
     public Map<String, Object> getAllEleves(int pageNo, int pageSize) {
-        Page<Eleve> eleves = eleveRepository.findAll(PageRequest.of(pageNo, pageSize));
+        Page<Eleve> eleves = eleveRepository.findAllActiveEleves(PageRequest.of(pageNo, pageSize));
 
         List<EleveDTO> eleveDTOS = eleves.getContent()
                 .stream()
@@ -104,6 +104,7 @@ public class EleveServiceImpl implements EleveService {
         upadateEleve.setNumCopie(eleve.getNumCopie());
         upadateEleve.setNmbFrereEtSoeur(eleve.getNmbFrereEtSoeur());
         upadateEleve.setPoste(eleve.getPoste());
+        upadateEleve.setAnnScolaire(eleve.getAnnScolaire());
         eleveRepository.save(upadateEleve);
         return true;
     }

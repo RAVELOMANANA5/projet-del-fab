@@ -45,6 +45,7 @@ public class InspecteurServiceImpl implements InspecteurService {
         if (byMatrInspect.isPresent()) {
             throw new ResourceAlreadyExistsException("Matricule inspecteur " + inspecteur.getMatrInspect() + " est déjà existe");
         }
+        inspecteur.setArchived(false);
         inspecteurRepository.save(inspecteur);
     }
 
@@ -59,6 +60,7 @@ public class InspecteurServiceImpl implements InspecteurService {
 
         List<InspecteurDTO> inspecteurDTOList = inspecteurs.getContent()
                 .stream()
+                .filter(inspecteur -> inspecteur.isArchived() == false)
                 .map(inspecteurDTOMapper)
                 .collect(Collectors.toList());
 
@@ -79,6 +81,7 @@ public class InspecteurServiceImpl implements InspecteurService {
 
         InspecteurDTO inspecteurDTO = inspecteurRepository.findById(id)
                 .stream()
+                .filter(inspecteur -> inspecteur.isArchived() == false)
                 .map(inspecteurDTOMapper)
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("Inspecteur " + id + " n'existe pas"));
@@ -100,6 +103,7 @@ public class InspecteurServiceImpl implements InspecteurService {
 
         List<InspecteurDetailDTO> inspecteurDetailDTOS = inspecteurs.getContent()
                 .stream()
+                .filter(inspecteur -> inspecteur.isArchived() == false)
                 .map(inspecteurDetailDTOMapper)
                 .collect(Collectors.toList());
 
@@ -137,6 +141,7 @@ public class InspecteurServiceImpl implements InspecteurService {
         byID.setEtudeSecond(inspecteur.getEtudeSecond());
         byID.setLieuEtudeSecond(inspecteur.getLieuEtudeSecond());
         byID.setDernierDiplome(inspecteur.getDernierDiplome());
+        byID.setArchived(false);
         inspecteurRepository.save(byID);
         return true;
     }

@@ -2,6 +2,7 @@ package com.stage.service.scolaireService.impl;
 
 import com.stage.dtoMappers.scolaireMapper.ResultatExamenDTOMapper;
 import com.stage.dtos.scolaireDTOS.ResultatExamenDTO;
+import com.stage.dtos.scolaireDTOS.ResultatParTrimestreDTO;
 import com.stage.exception.ResourceNotFoundException;
 import com.stage.models.scolaire.ResultatExamen;
 import com.stage.repository.scolaireRepository.ResultatExamenRepository;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,12 +93,52 @@ public class ResultatExamenServiceImpl implements ResultatExamenService {
         return true;
     }
 
-    public Map<String, Object> findElevesWithMoyenneAndRang() {
-        List<ResultatExamen> elevesWithMoyenneAndRang = resultatExamenRepository.findElevesWithMoyenneAndRang();
+    public Map<String, Object> findElevesWithMoyenneAndRang(Integer pageNo, Integer pageSize) {
+        Page<Object[]> elevesWithMoyenneAndRang = resultatExamenRepository.findResultPerTrimeste(PageRequest.of(pageNo, pageSize));
+        List<ResultatParTrimestreDTO> resul = elevesWithMoyenneAndRang.getContent()
+                .stream()
+                .map(res -> new ResultatParTrimestreDTO(
+                        (String) res[0], (String) res[1], (String) res[2], (String) res[3], (String) res[4],
+                        (String) res[5], (Integer) res[6], (Integer) res[7], (BigDecimal) res[8], (String) res[9], (Long) res[10]
+                ))
+                .collect(Collectors.toList());
 
         Map<String, Object> response = new HashMap<>();
-        response.put("resultat", elevesWithMoyenneAndRang);
+        response.put("resultat", resul);
+        response.put("currentPage", elevesWithMoyenneAndRang.getNumber());
+        response.put("size", elevesWithMoyenneAndRang.getSize());
+        response.put("totalPages", elevesWithMoyenneAndRang.getTotalPages());
 
         return response;
     }
+
+    /**
+     * @param pageNo
+     * @param pageSize
+     * @param nomPoste
+     * @return
+     */
+    @Override
+    public Map<String, Object> findAllByNumPosteOrNomPoste(
+            Integer pageNo, Integer pageSize, String numPoste, String nomPoste
+    ) {
+        Page<Object[]> elevesWithMoyenneAndRang = resultatExamenRepository.findAllByNumPosteOrNomPoste(
+                PageRequest.of(pageNo, pageSize), numPoste, nomPoste);
+        List<ResultatParTrimestreDTO> resul = elevesWithMoyenneAndRang.getContent()
+                .stream()
+                .map(res -> new ResultatParTrimestreDTO(
+                        (String) res[0], (String) res[1], (String) res[2], (String) res[3], (String) res[4],
+                        (String) res[5], (Integer) res[6], (Integer) res[7], (BigDecimal) res[8], (String) res[9], (Long) res[10]
+                ))
+                .collect(Collectors.toList());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("resultat", resul);
+        response.put("currentPage", elevesWithMoyenneAndRang.getNumber());
+        response.put("size", elevesWithMoyenneAndRang.getSize());
+        response.put("totalPages", elevesWithMoyenneAndRang.getTotalPages());
+
+        return response;
+    }
+
 }

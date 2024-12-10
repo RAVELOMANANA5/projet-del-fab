@@ -13,6 +13,10 @@ public class ArchiveEleve {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "date_fin", nullable = false)
-    private LocalDate dateFin;
+    @Column(name = "archive_date", nullable = false)
+    private LocalDate archiveDate;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "eleve_id", nullable = false)
+    private Eleve eleve;
 }

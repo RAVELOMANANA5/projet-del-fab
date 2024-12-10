@@ -29,16 +29,19 @@ public class Moniteur extends Personnel {
     @Size(min = 4, message = "Matricule moniteur doit comporter au moins 4 caractères")
     private String matrMoniteur;
 
-    @Column(name = "ann_entrer_mon")
+    @Column(name = "ann_entrer")
     private Year anEntrerMon;
 
     @Column(name = "code_secteur")
-    @NotBlank(message = "Le code secteur ne peut pas être vide")
-    @Size(min = 2, message = "Code secteur doit comporter au moins 2 caractères")
+    //@NotBlank(message = "Le code secteur ne peut pas être vide")
+    //@Size(min = 2, message = "Code secteur doit comporter au moins 2 caractères")
     private String codeSecteur;
 
     private LocalTime heure;
 
     @OneToMany(mappedBy = "moniteur", fetch = FetchType.EAGER)
     private List<Poste> postes;
+
+    @OneToOne(mappedBy = "moniteur", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private ArchiveMoniteur archiveMoniteur;
 }

@@ -69,4 +69,7 @@ public class Personnel {
     @NotBlank(message = "Derniere diplôme ne peut pas être vide")
     @Size(min = 2, message = "Derniere diplôme doit comporter au moins 2 caractères")
     private String dernierDiplome;
+
+    @Column(name = "archived")
+    private boolean archived = false;
 }

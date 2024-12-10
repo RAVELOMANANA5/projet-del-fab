@@ -48,4 +48,7 @@ public class Inspecteur extends Personnel {
 
     @OneToMany(mappedBy = "inspecteur", fetch = FetchType.EAGER)
     private List<Poste> postes;
+
+    @OneToOne(mappedBy = "inspecteur", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private ArchiveInspect archiveinspect;
 }

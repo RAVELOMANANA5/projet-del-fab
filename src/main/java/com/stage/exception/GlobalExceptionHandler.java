@@ -1,17 +1,11 @@
 package com.stage.exception;
 
 import com.stage.dtos.ErrorResponseDTO;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -21,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @ControllerAdvice
+@RequestMapping
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
@@ -68,7 +63,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(value = {ResourceNotFoundException.class})
     @ResponseBody
-    public ResponseEntity<ErrorResponseDTO> handleResourceNotFoundException(
+    public ResponseEntity<Map<String, ErrorResponseDTO>> handleResourceNotFoundException(
             ResourceNotFoundException resourceNotFoundException
     ) {
         ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(
@@ -77,7 +72,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 HttpStatus.NOT_FOUND,
                 LocalDateTime.now()
         );
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponseDTO);
+
+        Map<String, ErrorResponseDTO> errorResponseDTOMap = new HashMap<>();
+        errorResponseDTOMap.put("error", errorResponseDTO);
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponseDTOMap);
     }
 
     /**
@@ -86,7 +88,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(value = {ResourceAlreadyExistsException.class})
     @ResponseBody
-    public ResponseEntity<ErrorResponseDTO> handleCustomerAlreadyExistsException(
+    public ResponseEntity<Map<String, ErrorResponseDTO>> handleCustomerAlreadyExistsException(
             ResourceAlreadyExistsException resourceAlreadyExistsException
     ) {
         ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(
@@ -95,6 +97,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 HttpStatus.CONFLICT,
                 LocalDateTime.now()
         );
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponseDTO);
+
+        Map<String, ErrorResponseDTO> errorResponseDTOMap = new HashMap<>();
+        errorResponseDTOMap.put("error", errorResponseDTO);
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorResponseDTOMap);
     }
 }

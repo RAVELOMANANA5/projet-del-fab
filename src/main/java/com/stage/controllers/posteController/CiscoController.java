@@ -12,7 +12,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/Cisco")
-@CrossOrigin("http://localhost:****")
 public class CiscoController {
 
     private final CiscoService ciscoService;

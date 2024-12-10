@@ -14,7 +14,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "api/v1/ResultatExamens")
-@CrossOrigin("http://localhost:****")
 public class ResultatExamenController {
 
     private final ResultatExamenService resultatExamenService;

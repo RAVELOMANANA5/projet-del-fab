@@ -21,19 +21,33 @@ public class ArchivedMoniteurDTOMapper implements Function<ArchiveMoniteur, Arch
      * @return the function result
      */
     @Override
-    public ArchivedMoniteurDTO apply(ArchiveMoniteur am) {/*
+    public ArchivedMoniteurDTO apply(ArchiveMoniteur am) {
         return new ArchivedMoniteurDTO(
                 getOrDefault(() -> am.getMoniteur().getMatrMoniteur(), Constante.INCONNU),
                 getOrDefault(() -> am.getMoniteur().getNom(), Constante.INCONNU),
                 getOrDefault(() -> am.getMoniteur().getPrenom(), Constante.INCONNU),
-                getOrDefault(() -> am.getMoniteur().getPostes().)
+                collectPosteAttributes(am, Poste::getNumPoste),
+                collectPosteAttributes(am, Poste::getNomPoste),
+                collectPosteAttributes(am, p -> getOrDefault(() ->
+                        p.getSecteur().getNomSecteur(), Constante.INCONNU)),
+                collectPosteAttributes(am, p -> getOrDefault(() ->
+                        p.getInspecteur().getMatrInspect(), Constante.INCONNU)),
+                collectPosteAttributes(am, p -> getOrDefault(() ->
+                        p.getInspecteur().getMatrInspect(), Constante.INCONNU)),
+                collectPosteAttributes(am, p -> getOrDefault(() ->
+                        p.getInspecteur().getNom(), Constante.INCONNU)),
+                collectPosteAttributes(am, p -> getOrDefault(() ->
+                        p.getInspecteur().getPrenom(), Constante.INCONNU)),
+                collectPosteAttributes(am, p -> getOrDefault(() ->
+                        p.getSecteur().getZone().getNomZone(), Constante.INCONNU)),
+                collectPosteAttributes(am, p -> getOrDefault(() ->
+                        p.getSecteur().getZone().getRegion().getNomRegion(), Constante.INCONNU)),
+                am.getArchiveDateMon() + ""
         );
-*/
-        return null;
     }
 
-    private <T> String collectPosteAttributes(Moniteur moniteur, Function<Poste, T> mapper) {
-        return moniteur.getPostes()
+    private <T> String collectPosteAttributes(ArchiveMoniteur archiveMoniteur, Function<Poste, T> mapper) {
+        return archiveMoniteur.getMoniteur().getPostes()
                 .stream().map(mapper)
                 .map(Objects::toString)
                 .collect(Collectors.joining(", "));

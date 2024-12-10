@@ -1,6 +1,8 @@
 package com.stage.service.posteService.impl;
 
+import com.stage.dtoMappers.posteMapper.ArchivedMoniteurDTOMapper;
 import com.stage.dtoMappers.posteMapper.MoniteurDetailDTOMapper;
+import com.stage.dtos.posteDTOS.ArchivedMoniteurDTO;
 import com.stage.dtos.posteDTOS.MoniteurDTO;
 import com.stage.dtos.posteDTOS.MoniteurDetailDTO;
 import com.stage.models.poste.ArchiveMoniteur;
@@ -24,15 +26,15 @@ public class ArchivedMoniteurServiceImpl implements ArchivedMoniteurService {
 
     private final ArchivedMoniteurRepository archivedMoniteurRepository;
     private final MoniteurRepository moniteurRepository;
-    private final MoniteurDetailDTOMapper moniteurDetailDTOMapper;
+    private final ArchivedMoniteurDTOMapper archivedMoniteurDTOMapper;
 
     public ArchivedMoniteurServiceImpl(
             ArchivedMoniteurRepository archivedMoniteurRepository,
             MoniteurRepository moniteurRepository,
-            MoniteurDetailDTOMapper moniteurDetailDTOMapper) {
+            ArchivedMoniteurDTOMapper archivedMoniteurDTOMapper) {
         this.archivedMoniteurRepository = archivedMoniteurRepository;
         this.moniteurRepository = moniteurRepository;
-        this.moniteurDetailDTOMapper = moniteurDetailDTOMapper;
+        this.archivedMoniteurDTOMapper = archivedMoniteurDTOMapper;
     }
 
     /**
@@ -62,17 +64,16 @@ public class ArchivedMoniteurServiceImpl implements ArchivedMoniteurService {
      */
     @Override
     public Map<String, Object> getAllArchivedMoniteurs(int pageNo, int pageSize) {
-        Page<Moniteur> moniteurs = moniteurRepository.findAll(PageRequest.of(pageNo, pageSize));
+        Page<ArchiveMoniteur> moniteurs = archivedMoniteurRepository.findAll(PageRequest.of(pageNo, pageSize));
 
-        List<MoniteurDetailDTO> moniteurList = moniteurs.getContent()
+        List<ArchivedMoniteurDTO> moniteurList = moniteurs.getContent()
                 .stream()
-                .filter(moniteur -> moniteur.isArchived() == true)
-                .sorted(Comparator.comparing(Moniteur::getNom))
-                .map(moniteurDetailDTOMapper)
+                .sorted(Comparator.comparing(ArchiveMoniteur::getArchiveDateMon))
+                .map(archivedMoniteurDTOMapper)
                 .collect(Collectors.toList());
 
         Map<String, Object> response = new HashMap<>();
-        response.put("moniteurs", moniteurList);
+        response.put("archiveMoniteur", moniteurList);
         response.put("currentPage", moniteurs.getNumber());
         response.put("size", moniteurs.getSize());
         response.put("totalPages", moniteurs.getTotalPages());

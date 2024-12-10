@@ -16,7 +16,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/Postes")
-@CrossOrigin("http://localhost:****")
 public class PosteController {
 
     private final PosteService posteService;

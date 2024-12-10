@@ -13,7 +13,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(value = "api/v1/Regions")
-@CrossOrigin(value = "http://localhost:****")
 public class RegionController {
 
     private RegionServiceImpl regionService;

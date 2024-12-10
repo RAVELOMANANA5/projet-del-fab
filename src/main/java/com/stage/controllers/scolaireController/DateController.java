@@ -12,7 +12,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(value = "api/v1/Dates")
-@CrossOrigin("http://localhost:****")
 public class DateController {
 
     private final DateService dateService;

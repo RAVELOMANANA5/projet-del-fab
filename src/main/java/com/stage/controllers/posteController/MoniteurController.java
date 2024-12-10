@@ -12,7 +12,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/moniteurs")
-@CrossOrigin("http://localhost:****")
 public class MoniteurController {
 
     private final MoniteurService moniteurService;

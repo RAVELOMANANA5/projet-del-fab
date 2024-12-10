@@ -13,7 +13,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(value = "api/v1/Secteurs")
-@CrossOrigin("http://localhost:****")
 public class SecteurController {
 
     private final SecteurService secteurService;

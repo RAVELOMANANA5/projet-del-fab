@@ -12,7 +12,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/Communes")
-@CrossOrigin("http://localhost:****")
 public class CommuneController {
     private final CommuneService communeService;
 

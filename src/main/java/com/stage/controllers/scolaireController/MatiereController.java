@@ -12,7 +12,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(value = "api/v1/Matieres")
-@CrossOrigin("http://localhost:****")
 public class MatiereController {
 
     private final MatiereService matiereService;

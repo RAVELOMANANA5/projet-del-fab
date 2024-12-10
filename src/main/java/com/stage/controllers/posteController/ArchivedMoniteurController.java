@@ -3,10 +3,7 @@ package com.stage.controllers.posteController;
 import com.stage.service.posteService.ArchivedMoniteurService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,12 +23,29 @@ public class ArchivedMoniteurController {
         Map<String, Object> message = new HashMap<>();
         try {
             archivedMoniteurService.archiverMoniteur(id);
-            message.put("message", "Moniteur archivé");
+            message.put("message", "Moniteur archivé avec succès");
             return new ResponseEntity<>(message, HttpStatus.OK);
         }
         catch (Exception e) {
             message.put("message", e.getMessage());
             return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> getMoniteurs(
+            @RequestParam(defaultValue = "0") int pageNo,
+            @RequestParam(defaultValue = "10") int pageSize
+    ) {
+        Map<String, Object> response;
+        try {
+            response = archivedMoniteurService.getAllArchivedMoniteurs(pageNo, pageSize);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+        catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }
 }

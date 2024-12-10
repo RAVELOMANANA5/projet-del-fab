@@ -13,7 +13,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(value = "api/v1/Zones")
-@CrossOrigin("http://localhost:****")
 public class ZoneController {
 
     private final ZoneServiceImpl zoneService;
